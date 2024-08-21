@@ -40,6 +40,7 @@ searchRouter.get("/search", async (req: Request, res: Response) => {
         _id: "$collection",
         data: {
           $push: {
+            _id: "$_id",
             hotel_name: "$hotel_name",
             name: "$name",
             country: "$country",
@@ -50,7 +51,12 @@ searchRouter.get("/search", async (req: Request, res: Response) => {
   ]);
 
   const result = await data.toArray();
-  res.send(result);
+
+  res.send({
+    cities: result.filter((i) => i._id === "cities")?.[0]?.data,
+    countries: result.filter((i) => i._id === "countries")?.[0]?.data,
+    hotels: result.filter((i) => i._id === "hotels")?.[0]?.data,
+  });
 });
 
 export default searchRouter;

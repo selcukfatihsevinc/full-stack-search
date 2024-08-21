@@ -1,12 +1,11 @@
 import { useState, type ChangeEvent } from "react";
+import debounce from "lodash/debounce";
 import { getCodeSandboxHost } from "@codesandbox/utils";
 
-type Hotel = {
-  _id: string;
-  chain_name: string;
-  hotel_name: string;
-  city: string;
-  country: string;
+type SearchResponse = {
+  cities: [{ _id: string; name: string }];
+  countries: [{ _id: string; country: string }];
+  hotels: [{ _id: string; hotel_name: string; country: string }];
 };
 
 const codeSandboxHost = getCodeSandboxHost(3001);
@@ -14,33 +13,35 @@ const API_URL = codeSandboxHost
   ? `https://${codeSandboxHost}`
   : "http://localhost:3001";
 
-const fetchAndFilterHotels = async (value: string) => {
-  const hotelsData = await fetch(`${API_URL}/hotels`);
-  const hotels = (await hotelsData.json()) as Hotel[];
-  return hotels.filter(
-    ({ chain_name, hotel_name, city, country }) =>
-      chain_name.toLowerCase().includes(value.toLowerCase()) ||
-      hotel_name.toLowerCase().includes(value.toLowerCase()) ||
-      city.toLowerCase().includes(value.toLowerCase()) ||
-      country.toLowerCase().includes(value.toLowerCase())
-  );
+const fetchSearch = async (value: string) => {
+  const searchData = await fetch(`${API_URL}/search?q=${value}`);
+  const data = (await searchData.json()) as SearchResponse;
+  return data;
 };
 
 function App() {
-  const [hotels, setHotels] = useState<Hotel[]>([]);
+  const [searchData, setSearchData] = useState<SearchResponse | null>();
   const [showClearBtn, setShowClearBtn] = useState(false);
 
   const fetchData = async (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value === "") {
-      setHotels([]);
+    if (event.target.value.length < 3) {
+      setSearchData(null);
       setShowClearBtn(false);
       return;
     }
 
-    const filteredHotels = await fetchAndFilterHotels(event.target.value);
+    const data = await fetchSearch(event.target.value);
     setShowClearBtn(true);
-    setHotels(filteredHotels);
+    setSearchData(data);
   };
+
+  const fetchDebounced = debounce(fetchData, 300, {
+    maxWait: 1000,
+  });
+
+  const hotels = searchData?.hotels;
+  const countries = searchData?.countries;
+  const cities = searchData?.cities;
 
   return (
     <div className="App">
@@ -54,7 +55,7 @@ function App() {
                   type="text"
                   className="form-control form-input"
                   placeholder="Search accommodation..."
-                  onChange={fetchData}
+                  onChange={fetchDebounced}
                 />
                 {showClearBtn && (
                   <span className="left-pan">
@@ -62,7 +63,7 @@ function App() {
                   </span>
                 )}
               </div>
-              {!!hotels.length && (
+              {!!hotels?.length && (
                 <div className="search-dropdown-menu dropdown-menu w-100 show p-2">
                   <h2>Hotels</h2>
                   {hotels.length ? (
@@ -81,10 +82,42 @@ function App() {
                   ) : (
                     <p>No hotels matched</p>
                   )}
+
                   <h2>Countries</h2>
-                  <p>No countries matched</p>
+                  {countries?.length ? (
+                    countries.map((country, index) => (
+                      <li key={index}>
+                        <a
+                          href={`/countries/${country._id}`}
+                          className="dropdown-item"
+                        >
+                          <i className="fa fa-building mr-2"></i>
+                          {country.country}
+                        </a>
+                        <hr className="divider" />
+                      </li>
+                    ))
+                  ) : (
+                    <p>No countries matched</p>
+                  )}
+
                   <h2>Cities</h2>
-                  <p>No cities matched</p>
+                  {cities?.length ? (
+                    cities.map((city, index) => (
+                      <li key={index}>
+                        <a
+                          href={`/cities/${city._id}`}
+                          className="dropdown-item"
+                        >
+                          <i className="fa fa-building mr-2"></i>
+                          {city.name}
+                        </a>
+                        <hr className="divider" />
+                      </li>
+                    ))
+                  ) : (
+                    <p>No countries matched</p>
+                  )}
                 </div>
               )}
             </div>
