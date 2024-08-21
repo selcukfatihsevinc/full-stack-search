@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from "react";
+import { useState } from "react";
 import debounce from "lodash/debounce";
 import { getCodeSandboxHost } from "@codesandbox/utils";
 

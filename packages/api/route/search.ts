@@ -3,7 +3,7 @@ import express, { Request, Response } from "express";
 
 const searchRouter = express.Router();
 
-const searchLimit = 5;
+const searchLimit = 3;
 
 searchRouter.get("/search", async (req: Request, res: Response) => {
   const q = String(req.query.q)
