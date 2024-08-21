@@ -7,7 +7,7 @@ import { hotels } from "./seeds/hotels";
 const mongod = await MongoMemoryServer.create({
   instance: {
     port: 3002,
-  }
+  },
 });
 console.log("MongoMemoryServer started on", mongod.getUri());
 
@@ -28,7 +28,7 @@ try {
   await client.close();
 }
 
-process.on('SIGTERM', async () => {
+process.on("SIGTERM", async () => {
   await mongod.stop();
   process.exit(0);
 });
