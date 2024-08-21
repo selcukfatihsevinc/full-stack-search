@@ -22,17 +22,24 @@ const fetchSearch = async (value: string) => {
 function Home() {
   const [searchData, setSearchData] = useState<SearchResponse | null>();
   const [showClearBtn, setShowClearBtn] = useState(false);
+  const [inputVal, setInputVal] = useState("");
 
-  const fetchData = async (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.length < 3) {
+  const fetchData = async (value: string) => {
+    if (value.length < 3) {
       setSearchData(null);
       setShowClearBtn(false);
       return;
     }
 
-    const data = await fetchSearch(event.target.value);
+    const data = await fetchSearch(value);
     setShowClearBtn(true);
     setSearchData(data);
+  };
+
+  const clearInput = () => {
+    setSearchData(null);
+    setShowClearBtn(false);
+    setInputVal("");
   };
 
   const fetchDebounced = debounce(fetchData, 300, {
@@ -55,10 +62,17 @@ function Home() {
                   type="text"
                   className="form-control form-input"
                   placeholder="Search accommodation..."
-                  onChange={fetchDebounced}
+                  onChange={(e) => {
+                    setInputVal(e.target.value);
+                    fetchDebounced(e.target.value);
+                  }}
+                  value={inputVal}
                 />
                 {showClearBtn && (
-                  <span className="left-pan">
+                  <span
+                    className="left-pan cursor-pointer"
+                    onClick={clearInput}
+                  >
                     <i className="fa fa-close"></i>
                   </span>
                 )}

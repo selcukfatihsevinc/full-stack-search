@@ -89,3 +89,12 @@ body {
   max-height: 450px;
   overflow: scroll;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.text-3xl {
+  font-size: 1.875rem; /* 30px */
+  line-height: 2.25rem; /* 36px */
+}
