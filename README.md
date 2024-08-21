@@ -84,7 +84,18 @@ When clicking on one of the `Hotels`, `Cities` or `Countries` links, the applica
 
 <!-- Write-up/conclusion section -->
 
-_When all the behaviour is implemented, feel free to add some observations or conclusions you like to share in the section_
+I reviewed the code and considered my options. First, I decided to solve the main problem: creating a performant search. I didn't focus much on the code structure, just made some small changes.
+
+For the problem, I had three main options:
+
+1. Searching with regex on MongoDB:
+   This is the simplest solution, but if our hotels collection grows, it could cause performance issues.
+2. Full-text search on MongoDB:
+   This could work, but I need partial search capabilities, so this option won't meet my needs.
+3. Using a search engine like Meilisearch or Elasticsearch:
+   This is the best option, but for now, I don't want to add a new tool to the system.
+
+I decided to go with a mixed solution using MongoDB. I implemented a solution similar to the search engines by creating edge n-grams for the necessary text fields and indexing these fields. For the search, I used the aggregation pipeline to search across the three collections using the token field.
 
 ### Database structure
 
