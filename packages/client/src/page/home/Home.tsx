@@ -2,7 +2,7 @@ import { useState, type ChangeEvent } from "react";
 import debounce from "lodash/debounce";
 import { getCodeSandboxHost } from "@codesandbox/utils";
 
-type SearchResponse = {
+export type SearchResponse = {
   cities: [{ _id: string; name: string }];
   countries: [{ _id: string; country: string }];
   hotels: [{ _id: string; hotel_name: string; country: string }];
@@ -19,7 +19,7 @@ const fetchSearch = async (value: string) => {
   return data;
 };
 
-function App() {
+function Home() {
   const [searchData, setSearchData] = useState<SearchResponse | null>();
   const [showClearBtn, setShowClearBtn] = useState(false);
 
@@ -128,4 +128,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home;
