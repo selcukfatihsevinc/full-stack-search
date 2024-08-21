@@ -1,4 +1,8 @@
-export const countries = [
+export const countries: {
+  country: string;
+  countryisocode: string;
+  token?: string[];
+}[] = [
   { country: "Belgium", countryisocode: "BE" },
   { country: "Bulgaria", countryisocode: "BG" },
   { country: "Chile", countryisocode: "CL" },

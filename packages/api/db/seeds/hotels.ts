@@ -1,4 +1,4 @@
-export const hotels = [
+const data = [
   {
     chain_name: "Samed Resorts Group",
     hotel_name: "Sai Kaew Beach Resort",
@@ -564,3 +564,7 @@ export const hotels = [
     star_rating: 4,
   },
 ];
+
+const hotels: ((typeof data)[0] & { token?: string[] })[] = data;
+
+export { hotels };
